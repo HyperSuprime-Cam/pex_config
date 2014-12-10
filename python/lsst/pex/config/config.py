@@ -225,6 +225,8 @@ class Field(object):
         Field types
         """
         self.dtype = dtype
+        if re.search("'''",doc):
+            raise ValueError("Documentation string cannot contain '''")
         self.doc = doc
         self.__doc__ = doc
         self.default = default
@@ -296,7 +298,7 @@ class Field(object):
         fullname = _joinNamePath(instance._name, self.name)
 
         # write documentation as multiline string
-        doc = "'''" + self.doc + "'''"
+        doc = "'''" + self.doc + " '''"
         if isinstance(value, float) and (math.isinf(value) or math.isnan(value)):
             # non-finite numbers need special care
             print >> outfile, "%s\n%s=float('%r')\n"%(doc, fullname, value)
