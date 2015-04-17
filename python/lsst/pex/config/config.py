@@ -20,6 +20,7 @@
 # see <http://www.lsstcorp.org/LegalNotices/>.
 #
 
+import os
 import io
 import traceback
 import sys
@@ -27,6 +28,7 @@ import math
 import collections
 import copy
 import re
+import tempfile
 
 from .comparison import *
 
@@ -616,8 +618,10 @@ class Config(object):
         @param root [in] name to use for the root config variable
             If not "root", must match what is used in load())
         """
-        with open(filename, 'w') as outfile:
+        d = os.path.split(filename)[0]
+        with tempfile.NamedTemporaryFile(delete=False, dir=d) as outfile:
             self.saveToStream(outfile, root)
+            os.rename(outfile.name, filename)
 
     def saveToStream(self, outfile, root="root"):
         """
